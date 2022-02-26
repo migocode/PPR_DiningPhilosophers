@@ -1,4 +1,6 @@
-﻿namespace PPR_DiningPhilospohers
+﻿using System.Diagnostics;
+
+namespace PPR_DiningPhilospohers
 {
     public record Philosopher
     {
@@ -6,6 +8,7 @@
         private readonly int eatingTime;
 
         private readonly Random random;
+        private readonly Stopwatch stopwatch;
 
         public Fork LeftFork { get; }
         public Fork RightFork { get; }
@@ -19,7 +22,9 @@
 
             this.thinkingTime = thinkingTime;
             this.eatingTime = eatingTime;
+
             random = new Random();
+            stopwatch = new Stopwatch();
         }
 
         public void Eat(CancellationToken cancellationToken)
@@ -32,11 +37,22 @@
                 Thread.Sleep(thinkingTime);
                 Console.WriteLine($"Philosopher {PhilosopherNumber} finished thinking after {thinkingTime}ms.");
 
-                TakeFork(LeftFork);
-                Console.WriteLine($"Philosopher {PhilosopherNumber} took fork {LeftFork.ForkNumber}.");
+                if (PhilosopherNumber % 2 == 0)
+                {
+                    TakeFork(LeftFork);
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
 
-                TakeFork(RightFork);
-                Console.WriteLine($"Philosopher {PhilosopherNumber} took fork {RightFork.ForkNumber}.");
+                    TakeFork(RightFork);
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
+                }
+                else
+                {
+                    TakeFork(RightFork);
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
+
+                    TakeFork(LeftFork);
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
+                }
 
                 int eatingTime = GetEatingTime();
                 Thread.Sleep(eatingTime);
@@ -60,8 +76,15 @@
 
         private void TakeFork(Fork fork)
         {
+            stopwatch.Start();
             Monitor.Enter(fork);
+            stopwatch.Stop();
             fork.IsUsed = true;
+        }
+
+        public long GetWaitTimes()
+        {
+            return stopwatch.ElapsedMilliseconds;
         }
 
         private void PutBackForks(Fork fork1, Fork fork2)

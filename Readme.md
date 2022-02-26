@@ -1,4 +1,4 @@
-# Subtask 1: A naive implementation
+﻿# Subtask 1: A naive implementation
 With long waiting periods (around 1000ms) deadlocks do not occur (at least in a reasonably long observation period).
 A deadlock was encounterd with 3 philosophers and waiting periods (Thinkingtime and Eatingtime) of 10 ms.
 
@@ -22,6 +22,19 @@ we also had aribrary sleeps)**
     2. the forks are held and other resources/forks are requested in the meantime
     3. no stealing resource locks by other threads
     4. like the philosophers sitting on a round table each waiting for a neighbors fork
+
+- **Switch the order in which philosophers take the fork by using the following scheme: Odd philoso-
+phers start with the left fork, while even philosophers start with the right hand [6 points]. Make
+sure to use concurrency primitives correctly!**
+
+    ✅
+
+- **Does this strategy resolve the deadlock and why [1 point]?**
+    
+    Implementing the "Odd-Philosopher-Strategy" resolved the deadlock-issue, because for a deadlock to occur, all 4 conditions need to be present.
+    By implementing this strategy, the "Circular waits" were removed. 
+
+
     
 
 
