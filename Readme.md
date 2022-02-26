@@ -34,7 +34,22 @@ sure to use concurrency primitives correctly!**
     Implementing the "Odd-Philosopher-Strategy" resolved the deadlock-issue, because for a deadlock to occur, all 4 conditions need to be present.
     By implementing this strategy, the "Circular waits" were removed. 
 
+- **Measure the total time spent in waiting for forks and compare it to the total runtime. Interpret
+the measurement - Was the result expected? [3 points].**
 
+    5 Philosophers, 5 ms Thinkingtime, 5 ms Eatingtime:
+    Total waittimes: 75.278,00ms / Total run time: 269.811,00ms
+
+    10 Philosophers, 100 ms Thinkingtime, 100 ms Eatingtime:
+    Total waittimes: 141.076,00ms / Total run time: 475.223,00ms
+
+    Roughly a quarter is waiting time. That is rather surprisingly high.
+
+- **Can you think of other techniques for deadlock prevention?**
+
+    In this case, one could think of resolving this issue by allowing stealing of threats in some way.
+    If philosophers would not have to wait until another philosopher has finished eating before starting to eat themselves and therefore
+    removing the "No preemption" condition.
     
 
 
