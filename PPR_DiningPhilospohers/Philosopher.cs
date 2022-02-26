@@ -7,8 +7,12 @@ namespace PPR_DiningPhilospohers
         private readonly int thinkingTime;
         private readonly int eatingTime;
 
+        private bool leftForkAcquired;
+        private bool rightForkAcquired;
+
         private readonly Random random;
-        private readonly Stopwatch stopwatch;
+        private readonly Stopwatch waitStopwatch;
+        private readonly Stopwatch executionStopwatch;
 
         public Fork LeftFork { get; }
         public Fork RightFork { get; }
@@ -24,13 +28,15 @@ namespace PPR_DiningPhilospohers
             this.eatingTime = eatingTime;
 
             random = new Random();
-            stopwatch = new Stopwatch();
+            waitStopwatch = new Stopwatch();
+            executionStopwatch = new Stopwatch();
         }
 
         public void Eat(CancellationToken cancellationToken)
         {
             Console.WriteLine($"Philosopher: {this.ToString()}");
 
+            executionStopwatch.Start();
             while (cancellationToken.IsCancellationRequested == false)
             {
                 int thinkingTime = GetThinkingTime();
@@ -39,18 +45,18 @@ namespace PPR_DiningPhilospohers
 
                 if (PhilosopherNumber % 2 == 0)
                 {
-                    TakeFork(LeftFork);
+                    TakeLeftFork();
                     Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
 
-                    TakeFork(RightFork);
+                    TakeRightFork();
                     Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
                 }
                 else
                 {
-                    TakeFork(RightFork);
+                    TakeRightFork();
                     Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
 
-                    TakeFork(LeftFork);
+                    TakeLeftFork();
                     Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
                 }
 
@@ -58,8 +64,9 @@ namespace PPR_DiningPhilospohers
                 Thread.Sleep(eatingTime);
 
                 Console.WriteLine($"Philosopher {PhilosopherNumber} is done eating.");
-                PutBackForks(LeftFork, RightFork);
+                PutBackForks();
             }
+            executionStopwatch.Stop();
 
             Console.WriteLine($"Philosopher {PhilosopherNumber} cancelled.");
         }
@@ -74,23 +81,64 @@ namespace PPR_DiningPhilospohers
             return random.Next(0, thinkingTime);
         }
 
-        private void TakeFork(Fork fork)
+        private void TakeLeftFork()
         {
-            stopwatch.Start();
-            Monitor.Enter(fork);
-            stopwatch.Stop();
-            fork.IsUsed = true;
+            leftForkAcquired = false;
+            try
+            {
+                waitStopwatch.Start();
+                Monitor.Enter(LeftFork, ref leftForkAcquired);
+                waitStopwatch.Stop();
+                LeftFork.IsUsed = true;
+            }
+            catch
+            {
+                if (leftForkAcquired)
+                {
+                    Monitor.Exit(LeftFork);
+                }
+            }
         }
 
-        public long GetWaitTimes()
+        private void TakeRightFork()
         {
-            return stopwatch.ElapsedMilliseconds;
+            rightForkAcquired = false;
+            try
+            {
+                waitStopwatch.Start();
+                Monitor.Enter(RightFork, ref rightForkAcquired);
+                waitStopwatch.Stop();
+                RightFork.IsUsed = true;
+            }
+            catch
+            {
+                if (rightForkAcquired)
+                {
+                    Monitor.Exit(RightFork);
+                }
+            }
         }
 
-        private void PutBackForks(Fork fork1, Fork fork2)
+        public long GetWaitTime()
         {
-            Monitor.Exit(fork1);
-            Monitor.Exit(fork2);
+            return waitStopwatch.ElapsedMilliseconds;
+        }
+
+        public long GetExecutionTime()
+        {
+            return executionStopwatch.ElapsedMilliseconds;
+        }
+
+        private void PutBackForks()
+        {
+            if (rightForkAcquired)
+            {
+                Monitor.Exit(RightFork);
+            }
+            if (leftForkAcquired)
+            {
+                Monitor.Exit(LeftFork);
+            }
         }
     }
 }
