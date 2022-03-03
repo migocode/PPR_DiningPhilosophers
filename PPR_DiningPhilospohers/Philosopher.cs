@@ -39,32 +39,38 @@ namespace PPR_DiningPhilospohers
             executionStopwatch.Start();
             while (cancellationToken.IsCancellationRequested == false)
             {
-                int thinkingTime = GetThinkingTime();
-                Thread.Sleep(thinkingTime);
-                Console.WriteLine($"Philosopher {PhilosopherNumber} finished thinking after {thinkingTime}ms.");
-
-                if (PhilosopherNumber % 2 == 0)
+                try
                 {
-                    TakeLeftFork();
-                    Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
+                    int thinkingTime = GetThinkingTime();
+                    Thread.Sleep(thinkingTime);
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} finished thinking after {thinkingTime}ms.");
 
-                    TakeRightFork();
-                    Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
+                    if (PhilosopherNumber % 2 == 0)
+                    {
+                        TakeLeftFork();
+                        Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
+
+                        TakeRightFork();
+                        Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
+                    }
+                    else
+                    {
+                        TakeRightFork();
+                        Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
+
+                        TakeLeftFork();
+                        Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
+                    }
+
+                    int eatingTime = GetEatingTime();
+                    Thread.Sleep(eatingTime);
+
+                    Console.WriteLine($"Philosopher {PhilosopherNumber} is done eating.");
                 }
-                else
+                finally
                 {
-                    TakeRightFork();
-                    Console.WriteLine($"Philosopher {PhilosopherNumber} took right fork {RightFork.ForkNumber}.");
-
-                    TakeLeftFork();
-                    Console.WriteLine($"Philosopher {PhilosopherNumber} took left fork {LeftFork.ForkNumber}.");
+                    PutBackForks();
                 }
-
-                int eatingTime = GetEatingTime();
-                Thread.Sleep(eatingTime);
-
-                Console.WriteLine($"Philosopher {PhilosopherNumber} is done eating.");
-                PutBackForks();
             }
             executionStopwatch.Stop();
 
@@ -139,6 +145,17 @@ namespace PPR_DiningPhilospohers
             {
                 Monitor.Exit(LeftFork);
             }
+        }
+    }
+
+    public record Fork
+    {
+        public int ForkNumber { get; }
+        public bool IsUsed { get; set; }
+
+        public Fork(int forkNumber)
+        {
+            ForkNumber = forkNumber;
         }
     }
 }

@@ -52,6 +52,6 @@ foreach (Philosopher philosopher in finishedPhilosophers)
     totalWaitTime += philosopher.GetWaitTime();
     totalExecutionTime += philosopher.GetExecutionTime();
 }
-Console.WriteLine($"Total waittimes: {totalWaitTime:N}ms / Total run time: {totalExecutionTime:N}ms");
+Console.WriteLine($"Total (parallel) waittimes: {totalWaitTime:N} ms / Total (parallel) run time: {totalExecutionTime:N} ms");
 
 Console.WriteLine("All philosophers cancelled.");

@@ -1,11 +1,16 @@
-﻿# Subtask 1: A naive implementation
+﻿# Team:
+- Aljoscha Alquati - se21m019
+- Michael Goll - se21003
+
+# Subtask 1: A naive implementation
 With long waiting periods (around 1000ms) deadlocks do not occur (at least in a reasonably long observation period).
 A deadlock was encounterd with 3 philosophers and waiting periods (Thinkingtime and Eatingtime) of 10 ms.
 
 The shorter the waiting periods, the more likely was a deadlock (all philosophers are waiting for forks).
 
 # Subtask 2: Deadlock prevention
-## Why does a deadlock occur?
+Why does the deadlock occur? Answer the following questions:
+
 - **What are the necessary conditions for deadlocks (discussed in the lecture) [0.5 points]?**
 
     1. Mutual exclusion
@@ -27,7 +32,7 @@ we also had aribrary sleeps)**
 phers start with the left fork, while even philosophers start with the right hand [6 points]. Make
 sure to use concurrency primitives correctly!**
 
-    ✅
+    Implementiert
 
 - **Does this strategy resolve the deadlock and why [1 point]?**
     
@@ -50,7 +55,11 @@ the measurement - Was the result expected? [3 points].**
     In this case, one could think of resolving this issue by allowing stealing of threats in some way.
     If philosophers would not have to wait until another philosopher has finished eating before starting to eat themselves and therefore
     removing the "No preemption" condition.
-    
+
+- **Make sure to always shutdown the program cooperatively and to always cleanup all allocated
+resources [2 points]**
+
+    Implementiert
 
 
 
